@@ -1,69 +1,498 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Zina's AI Learning Lab</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pinecone AI Learning Lab</title>
 
-<style>
-body{
-    font-family: Arial, sans-serif;
-    max-width: 1000px;
-    margin:auto;
-    padding:40px;
-}
+  <style>
+    :root {
+      --cardinal: #8C1515;
+      --white: #FFFFFF;
+      --cool-gray: #4D4F53;
+      --black: #2E2D29;
+      --warm-bg: #F7F4F2;
+      --border: #E4DDD7;
+      --soft-red: #F3E8E8;
+    }
 
-.card{
-    border:1px solid #ddd;
-    border-radius:12px;
-    padding:20px;
-    margin-bottom:20px;
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.button{
-    background:#0066ff;
-    color:white;
-    padding:10px 18px;
-    border-radius:6px;
-    text-decoration:none;
-}
-</style>
+    html {
+      scroll-behavior: smooth;
+    }
 
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--warm-bg);
+      color: var(--black);
+      line-height: 1.6;
+    }
+
+    .topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 22px 8%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .brand-logo {
+      max-width: 310px;
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .hero {
+      background:
+        linear-gradient(135deg, rgba(140, 21, 21, 0.97), rgba(46, 45, 41, 0.97)),
+        radial-gradient(circle at top left, rgba(255,255,255,0.18), transparent 36%);
+      color: var(--white);
+      padding: 78px 8% 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 330px;
+      height: 330px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.16);
+      right: -120px;
+      top: -95px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: rgba(255,255,255,0.82);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.7rem);
+      line-height: 1.05;
+      margin-bottom: 22px;
+      font-weight: 850;
+    }
+
+    .hero p {
+      max-width: 840px;
+      margin: 0 auto;
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+      color: rgba(255,255,255,0.92);
+    }
+
+    .hero-actions {
+      margin-top: 34px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-pill {
+      border: 1px solid rgba(255,255,255,0.45);
+      border-radius: 999px;
+      padding: 10px 17px;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.96);
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(6px);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 58px 6% 72px;
+    }
+
+    .intro {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(46,45,41,0.07);
+      margin-bottom: 56px;
+    }
+
+    .intro h2 {
+      color: var(--cardinal);
+      font-size: 1.65rem;
+      margin-bottom: 10px;
+    }
+
+    .intro p {
+      color: var(--cool-gray);
+      max-width: 920px;
+    }
+
+    .collection {
+      margin-bottom: 64px;
+    }
+
+    .collection-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .collection-icon {
+      width: 58px;
+      height: 58px;
+      min-width: 58px;
+      border-radius: 18px;
+      background: var(--soft-red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.85rem;
+      border: 1px solid rgba(140,21,21,0.13);
+      box-shadow: 0 6px 18px rgba(46,45,41,0.06);
+    }
+
+    .collection h2 {
+      color: var(--cardinal);
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+      line-height: 1.15;
+      margin-bottom: 7px;
+    }
+
+    .collection-description {
+      color: var(--cool-gray);
+      max-width: 810px;
+      font-size: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 26px;
+      min-height: 314px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 24px rgba(46,45,41,0.07);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 5px;
+      width: 100%;
+      background: var(--cardinal);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 34px rgba(46,45,41,0.13);
+      border-color: rgba(140,21,21,0.35);
+    }
+
+    .card-label {
+      color: var(--cardinal);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .card h3 {
+      font-size: 1.45rem;
+      line-height: 1.22;
+      margin-bottom: 12px;
+      color: var(--black);
+    }
+
+    .card p {
+      color: var(--cool-gray);
+      font-size: 0.98rem;
+      margin-bottom: 22px;
+      flex: 1;
+    }
+
+    .launch {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: fit-content;
+      background: var(--cardinal);
+      color: var(--white);
+      text-decoration: none;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight: 750;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .launch:hover {
+      background: var(--black);
+      transform: translateX(2px);
+    }
+
+    .note {
+      background: rgba(77,79,83,0.08);
+      border-left: 4px solid var(--cardinal);
+      border-radius: 14px;
+      padding: 20px 22px;
+      color: var(--cool-gray);
+      margin-top: 24px;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      background: var(--black);
+      color: var(--white);
+      text-align: center;
+      padding: 34px 8%;
+    }
+
+    footer p {
+      color: rgba(255,255,255,0.82);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar {
+        padding: 18px 7%;
+      }
+
+      .brand-logo {
+        max-width: 250px;
+      }
+
+      .hero {
+        padding: 60px 7% 54px;
+      }
+
+      .container {
+        padding: 38px 5% 52px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .collection-header {
+        flex-direction: column;
+      }
+
+      .card {
+        min-height: auto;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>Zina's AI Learning Lab</h1>
+  <div class="topbar">
+    <img src="pinecone-logo.png" alt="Pinecone by Stanford" class="brand-logo" />
+  </div>
 
-<p>
-A collection of AI assistants built using Playlab AI.
-</p>
+  <header class="hero">
+    <div class="eyebrow">Playlab AI Learning Collection</div>
+    <h1>Pinecone AI Learning Lab</h1>
+    <p>
+      A curated collection of interactive financial literacy assistants designed to help learners ask better questions, practice real-world decisions, and build confidence with money.
+    </p>
+    <div class="hero-actions">
+      <span class="hero-pill">12 AI experiences</span>
+      <span class="hero-pill">4 learning collections</span>
+      <span class="hero-pill">Financial literacy practice</span>
+    </div>
+  </header>
 
-<div class="card">
-<h2>Chatbot #1</h2>
+  <main class="container">
 
-<p>
-Description of chatbot.
-</p>
+    <section class="intro">
+      <h2>Explore the collection</h2>
+      <p>
+        These Playlab AI assistants support learners as they move from understanding core financial concepts to applying them in personal, practical, and scenario-based ways.
+      </p>
+    </section>
 
-<a class="button"
-href="https://YOUR-LINK-HERE">
-Launch
-</a>
+    <section class="collection">
+      <div class="collection-header">
+        <div class="collection-icon">💬</div>
+        <div>
+          <h2>Chat About Lessons</h2>
+          <p class="collection-description">
+            Conversation-based assistants that help learners go deeper into concepts introduced in the Pinecone modules.
+          </p>
+        </div>
+      </div>
 
-</div>
+      <div class="grid">
+        <article class="card">
+          <div class="card-label">Module exploration</div>
+          <h3>Financial Journey</h3>
+          <p>Grow your financial literacy, ask questions, and go deeper into topics inspired by the Module 1 learning experience.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmevrn8o2038ak30uogey0c69" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
 
-<div class="card">
-<h2>Chatbot #2</h2>
+        <article class="card">
+          <div class="card-label">Module exploration</div>
+          <h3>Money Management</h3>
+          <p>Explore questions and ideas connected to money management while extending the learning from Module 2.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmgl18bos1mi0jd0utf2pcp20" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
 
-<p>
-Description of chatbot.
-</p>
+        <article class="card">
+          <div class="card-label">Module exploration</div>
+          <h3>Saving and Borrowing</h3>
+          <p>Ask questions and deepen your understanding of saving, borrowing, and related financial choices from Module 3.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmjrs2nf80fscm80vv1s0g1vw" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
+      </div>
+    </section>
 
-<a class="button"
-href="https://YOUR-LINK-HERE">
-Launch
-</a>
+    <section class="collection">
+      <div class="collection-header">
+        <div class="collection-icon">🎯</div>
+        <div>
+          <h2>Step-Up To Challenge</h2>
+          <p class="collection-description">
+            Practical coaching assistants that help learners turn financial concepts into concrete goals, plans, and decisions.
+          </p>
+        </div>
+      </div>
 
-</div>
+      <div class="grid">
+        <article class="card">
+          <div class="card-label">Goal-setting coach</div>
+          <h3>Smart Goals</h3>
+          <p>Get friendly, step-by-step support to turn your ideas into a SMART financial goal you can actually achieve.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmikk9wiv0k92ii0tt5lx7for" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
+
+        <article class="card">
+          <div class="card-label">Budget builder</div>
+          <h3>Budget SetUp</h3>
+          <p>Create a personal budget while thinking through irregular income, fixed and variable expenses, cash flow, and savings goals.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmj7sg12j0i5plc0ucn8l8ma1" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
+
+        <article class="card">
+          <div class="card-label">Compound growth</div>
+          <h3>Time Value $</h3>
+          <p>Use real numbers to develop a gut-level understanding of why saving early matters and how compounding works.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmi5irur76n9mjx0uwky6ngfw" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="collection">
+      <div class="collection-header">
+        <div class="collection-icon">🎮</div>
+        <div>
+          <h2>Gamified Finance</h2>
+          <p class="collection-description">
+            Game-like assistants that turn financial concepts into simulations, predictions, and interactive decisions.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <div class="card-label">Investment simulation</div>
+          <h3>Risks and Returns</h3>
+          <p>Start with virtual money, choose assets, predict outcomes, play through rounds, and reflect on risk and return.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmjrqgnmc0ev8nt0u8hlnp1a0" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
+
+        <article class="card">
+          <div class="card-label">Credit card practice</div>
+          <h3>Credit Card Gamer</h3>
+          <p>Understand costly credit card practices such as cash advances, late fees, penalty APRs, and risky borrowing habits.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmjrqjqab0elhm80vqnk5erno" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
+
+        <article class="card">
+          <div class="card-label">Investing basics</div>
+          <h3>Investment and Index</h3>
+          <p>Learn the fundamentals of investments and index funds through a guided, gamified tour of essential concepts.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmhwiqzrl2wojmg0u29xn6wyg" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="collection">
+      <div class="collection-header">
+        <div class="collection-icon">✨</div>
+        <div>
+          <h2>Real-Life Financial Decisions</h2>
+          <p class="collection-description">
+            Scenario-based assistants that personalize financial learning around major life decisions.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <div class="card-label">Home buying</div>
+          <h3>House Loans</h3>
+          <p>Take on the role of a mortgage broker and help diverse clients figure out what homes they can afford to buy.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmi4567gm0jpvhl0u00bvznwg" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
+
+        <article class="card">
+          <div class="card-label">Auto financing</div>
+          <h3>Car Loan</h3>
+          <p>Learn the fundamentals of purchasing a car and understanding how a car loan works, even if you are not buying one now.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmikn1e1r0r8lky0ux6tngram" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
+
+        <article class="card">
+          <div class="card-label">Future planning</div>
+          <h3>Retirement Saving</h3>
+          <p>Explore why retirement saving matters, how starting early changes outcomes, and how time can work in your favor.</p>
+          <a class="launch" href="https://www.playlab.ai/project/cmjrqhenu0ewbnt0uk7h8jv5v" target="_blank" rel="noopener">Launch Assistant →</a>
+        </article>
+      </div>
+
+      <div class="note">
+        Note: These assistants are designed for educational exploration and practice. They are not a substitute for individualized financial, legal, or professional advice.
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Pinecone AI Learning Lab · Stanford-inspired design · Powered by Playlab AI</p>
+  </footer>
 
 </body>
 </html>
